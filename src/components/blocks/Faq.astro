@@ -1,0 +1,76 @@
+---
+import type { BlockComponentProps } from "emdash/ui";
+import type { PageLayoutBlock } from "../../../emdash-env";
+
+type FaqBlock = Extract<PageLayoutBlock, { _type: "portfolio_faq" }>;
+type Props = BlockComponentProps<FaqBlock>;
+
+const { value, blockKey } = Astro.props;
+const headingId = `${encodeURIComponent(blockKey)}-heading`;
+const items = (value.items ?? []).filter(
+	(item) => item.question?.trim() && item.answer?.trim(),
+);
+---
+
+{
+	items.length > 0 && (
+		<section class="frame" aria-labelledby={headingId}>
+			<div class="faq">
+				<h2 class="label faq__heading" id={headingId}>
+					{value.heading}
+				</h2>
+				<dl class="faq__list">
+					{items.map((item) => (
+						<div class="faq__item">
+							<dt>{item.question}</dt>
+							<dd>{item.answer}</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.faq {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: var(--spacing-md);
+		padding-block-start: var(--spacing-md);
+		border-block-start: 1px solid var(--color-border);
+	}
+
+	.faq__list {
+		display: grid;
+		row-gap: var(--spacing-lg);
+	}
+
+	.faq__item dt {
+		font-size: var(--font-size-xl);
+		font-weight: var(--font-weight-heading);
+		line-height: var(--leading-snug);
+		letter-spacing: var(--tracking-tight);
+	}
+
+	.faq__item dd {
+		margin-block-start: var(--spacing-xs);
+		max-width: var(--measure);
+		color: var(--color-muted);
+	}
+
+	@media (min-width: 768px) {
+		.faq {
+			grid-template-columns: repeat(12, minmax(0, 1fr));
+			column-gap: var(--gutter);
+		}
+
+		.faq__heading {
+			grid-column: 1 / span 3;
+		}
+
+		.faq__list {
+			grid-column: 4 / -1;
+		}
+	}
+</style>
